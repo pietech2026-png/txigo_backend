@@ -1,29 +1,27 @@
-const mongoose = require('mongoose');
-const Admin = require('../models/Admin');
-const Driver = require('../models/Driver');
-const connectDB = require('../config/db');
-require('dotenv').config();
+import mongoose from 'mongoose';
+import Admin from '../models/Admin.js';
+import Driver from '../models/Driver.js';
+import connectDB from '../config/db.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const seed = async () => {
     try {
         await connectDB();
 
-        // Clear existing data (optional, but good for reset)
         await Admin.deleteMany();
         await Driver.deleteMany();
 
         console.log('Data Cleared...');
 
-        // Create Admin
         const admin = new Admin({
             name: 'Super Admin',
             email: 'admin@txigo.com',
-            password: 'admin_password' // This will be hashed by the pre-save hook
+            password: 'admin_password'
         });
         await admin.save();
         console.log('Admin Created: admin@txigo.com / admin_password');
 
-        // Create Sample Drivers
         const sampleDrivers = [
             {
                 fullName: 'Rahul Sharma',
@@ -38,7 +36,6 @@ const seed = async () => {
                 panNumber: 'ABCDE1234F',
                 dlNumber: 'DL-1234567890',
                 status: 'Active',
-                type: 'regular',
                 documents: {
                     aadharFront: { url: 'https://via.placeholder.com/150', status: 'verified' },
                     aadharBack: { url: 'https://via.placeholder.com/150', status: 'verified' },
@@ -58,7 +55,6 @@ const seed = async () => {
                 vehicleType: 'bike',
                 rcNumber: 'DL01A1111',
                 status: 'Pending',
-                type: 'regular',
                 documents: {
                     aadharFront: { url: 'https://via.placeholder.com/150', status: 'pending' },
                     rcFront: { url: 'https://via.placeholder.com/150', status: 'pending' }

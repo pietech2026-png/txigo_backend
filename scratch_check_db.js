@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
-const Driver = require('./models/Driver');
-require('dotenv').config();
+import mongoose from 'mongoose';
+import Driver from './models/Driver.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const checkDB = async () => {
     try {

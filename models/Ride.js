@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const RideSchema = new mongoose.Schema({
     passengerId: {
@@ -30,7 +30,7 @@ const RideSchema = new mongoose.Schema({
         required: true
     },
     distance: {
-        type: Number, // In KM
+        type: Number,
         required: true
     },
     vehicleType: {
@@ -55,4 +55,4 @@ const RideSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Ride', RideSchema);
+export default mongoose.model('Ride', RideSchema);

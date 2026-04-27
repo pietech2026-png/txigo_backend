@@ -1,10 +1,10 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { getPlans, createPlan, updatePlan } = require('../controllers/subscriptionController');
-const { protect } = require('../middleware/authMiddleware');
+import { getPlans, createPlan, updatePlan } from '../controllers/subscriptionController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 router.get('/', getPlans);
 router.post('/', protect, createPlan);
 router.patch('/:id', protect, updatePlan);
 
-module.exports = router;
+export default router;

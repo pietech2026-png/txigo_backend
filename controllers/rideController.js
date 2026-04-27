@@ -1,16 +1,16 @@
-const Ride = require('../models/Ride');
-const Driver = require('../models/Driver');
-const Transaction = require('../models/Transaction');
+import Ride from '../models/Ride.js';
+import Driver from '../models/Driver.js';
+import Transaction from '../models/Transaction.js';
 
 // @desc    Get all rides (history)
 // @route   GET /api/admin/rides
 // @access  Private
-const getRides = async (req, res) => {
+export const getRides = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    const { status, vehicleType, search } = req.query;
+    const { status, vehicleType } = req.query;
     let query = {};
 
     if (status) query.status = status;
@@ -38,7 +38,7 @@ const getRides = async (req, res) => {
 // @desc    Get live active rides
 // @route   GET /api/admin/rides/active
 // @access  Private
-const getActiveRides = async (req, res) => {
+export const getActiveRides = async (req, res) => {
     try {
         const rides = await Ride.find({ status: { $in: ['Requested', 'Accepted', 'Active'] } })
             .populate('passengerId', 'fullName mobile')
@@ -54,7 +54,7 @@ const getActiveRides = async (req, res) => {
 // @desc    Get single ride details
 // @route   GET /api/admin/rides/:id
 // @access  Private
-const getRideDetails = async (req, res) => {
+export const getRideDetails = async (req, res) => {
     try {
         const ride = await Ride.findById(req.params.id)
             .populate('passengerId', 'fullName email mobile')
@@ -72,7 +72,7 @@ const getRideDetails = async (req, res) => {
 // @desc    Cancel a ride
 // @route   POST /api/admin/rides/:id/cancel
 // @access  Private
-const cancelRide = async (req, res) => {
+export const cancelRide = async (req, res) => {
     try {
         const ride = await Ride.findById(req.params.id);
         if (!ride) {
@@ -95,7 +95,7 @@ const cancelRide = async (req, res) => {
 // @desc    Complete a ride and calculate commission
 // @route   POST /api/admin/rides/:id/complete
 // @access  Private
-const completeRide = async (req, res) => {
+export const completeRide = async (req, res) => {
     try {
         const ride = await Ride.findById(req.params.id);
         if (!ride) {
@@ -111,17 +111,13 @@ const completeRide = async (req, res) => {
             return res.status(404).json({ message: 'Driver not found' });
         }
 
-        // Calculate Commission based on subscription plan
-        // If Prime, apply 5% deduction; if Regular or None, apply 15% deduction.
         const commissionRate = driver.subscriptionPlan === 'Prime' ? 0.05 : 0.15;
         const commissionAmount = ride.fare * commissionRate;
         const driverEarnings = ride.fare - commissionAmount;
 
-        // Update Driver Wallet
         driver.walletBalance = (driver.walletBalance || 0) + driverEarnings;
         await driver.save();
 
-        // Create Transaction for Commission (Debit from Fare)
         await Transaction.create({
             userType: 'Driver',
             userId: driver._id,
@@ -133,7 +129,6 @@ const completeRide = async (req, res) => {
             status: 'Completed'
         });
 
-        // Create Transaction for Earnings (Credit)
         await Transaction.create({
             userType: 'Driver',
             userId: driver._id,
@@ -145,7 +140,6 @@ const completeRide = async (req, res) => {
             status: 'Completed'
         });
 
-        // Update Ride Status
         ride.status = 'Completed';
         ride.completedAt = Date.now();
         await ride.save();
@@ -161,5 +155,3 @@ const completeRide = async (req, res) => {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
-
-module.exports = { getRides, getActiveRides, getRideDetails, cancelRide, completeRide };

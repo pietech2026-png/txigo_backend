@@ -1,22 +1,19 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const BookingSchema = new mongoose.Schema({
-  // Customer
   customerName: { type: String, required: true },
   customerEmail: { type: String },
   customerMobile: { type: String, required: true },
   
-  // Trip Configuration
   serviceType: { 
     type: String, 
     enum: ['Outstation', 'Rental', 'Airport Ride', 'Station Ride'],
     required: true 
   },
-  wayType: { type: String }, // One-way / Roundtrip
-  airportDirection: { type: String }, // To / From
+  wayType: { type: String },
+  airportDirection: { type: String },
   rentalPackage: { type: String },
   
-  // Route details
   pickup: {
     address: String,
     lat: Number,
@@ -30,20 +27,17 @@ const BookingSchema = new mongoose.Schema({
     lng: Number
   },
   pickupTime: { type: Date, required: true },
-  returnTime: { type: Date }, // Optional field for Outstation Roundtrips
+  returnTime: { type: Date },
   
-  // Vehicle details
   vehicle: {
-    category: String, // Mini, Sedan, SUV
+    category: String,
     carModel: String,
     seater: Number,
     isAC: { type: Boolean, default: true }
   },
   
-  // Internal Flags
   isOwnPilotAllocated: { type: Boolean, default: false },
   
-  // Financials
   pricing: {
     distance: Number,
     totalFare: Number,
@@ -58,7 +52,6 @@ const BookingSchema = new mongoose.Schema({
     }
   },
   
-  // Status & Assignment
   status: {
     type: String,
     enum: ['Pending', 'Confirmed', 'Outstation', 'Completed', 'Cancelled'],
@@ -91,4 +84,4 @@ const BookingSchema = new mongoose.Schema({
   ]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Booking', BookingSchema);
+export default mongoose.model('Booking', BookingSchema);

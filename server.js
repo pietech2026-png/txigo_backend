@@ -1,18 +1,22 @@
 console.log("SERVER FILE LOADED");
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const morgan = require('morgan');
-const connectDB = require('./config/db');
-const adminRoutes = require('./routes/adminRoutes');
-const driverPublicRoutes = require('./routes/driverPublicRoutes');
-const supportPublicRoutes = require('./routes/supportPublicRoutes');
-const uploadRoutes = require('./routes/uploadRoutes');
-const driverAppRoutes = require('./routes/driverAppRoutes');
-const userAppRoutes = require('./routes/userAppRoutes');
-const bookingRoutes = require('./routes/bookingRoutes');
-const path = require('path');
-const bcrypt = require('bcryptjs');
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import morgan from 'morgan';
+import connectDB from './config/db.js';
+import adminRoutes from './routes/adminRoutes.js';
+import driverPublicRoutes from './routes/driverPublicRoutes.js';
+import supportPublicRoutes from './routes/supportPublicRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
+import driverAppRoutes from './routes/driverAppRoutes.js';
+import userAppRoutes from './routes/userAppRoutes.js';
+import bookingRoutes from './routes/bookingRoutes.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import bcrypt from 'bcryptjs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -34,7 +38,7 @@ app.use(morgan('dev'));
 // Static folder for uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Logger for debugging (as requested in original file)
+// Logger for debugging
 app.use((req, res, next) => {
     console.log(`Incoming Request: ${req.method} ${req.url}`);
     next();
@@ -46,13 +50,13 @@ app.use('/api/admin', adminRoutes);
 // Public Driver API Routes
 app.use('/api/drivers', driverPublicRoutes);
 
-// Driver App API Routes (Profile, Plan)
+// Driver App API Routes
 app.use('/api/driver', driverAppRoutes);
 
-// User App API Routes (Profile, Wallet)
+// User App API Routes
 app.use('/api/user', userAppRoutes);
 
-// Public Support API Routes (Ticket Creation)
+// Public Support API Routes
 app.use('/api/support', supportPublicRoutes);
 
 // File Upload Route
@@ -62,10 +66,10 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/bookings', bookingRoutes);
 
 // Notification Routes
-const notificationRoutes = require('./routes/notificationRoutes');
+import notificationRoutes from './routes/notificationRoutes.js';
 app.use('/api/notifications', notificationRoutes);
 
-// Debug Route to generate hash
+// Debug Route
 app.get('/create-admin', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash("Admin@123", 10);
@@ -78,7 +82,7 @@ app.get('/create-admin', async (req, res) => {
 
 // Root Route
 app.get('/', (req, res) => {
-    res.send('Txigo Backend API is running...');
+    res.send('Txigo Backend API is running on Vercel 🚀');
 });
 
 // Error handling middleware
@@ -90,8 +94,11 @@ app.use((err, req, res, next) => {
     });
 });
 
-const PORT = process.env.PORT || 5000;
+export default app;
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server running locally on port ${PORT}`);
+    });
+}

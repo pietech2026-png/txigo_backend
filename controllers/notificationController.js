@@ -1,9 +1,9 @@
-const Notification = require('../models/Notification');
+import Notification from '../models/Notification.js';
 
 // @desc    Get notifications for a driver or user
 // @route   GET /api/notifications
-// @access  Public (for polling in app)
-const getNotifications = async (req, res) => {
+// @access  Public
+export const getNotifications = async (req, res) => {
     try {
         const { driverId, userId, bookingId } = req.query;
         let query = {};
@@ -15,8 +15,6 @@ const getNotifications = async (req, res) => {
         } else if (userId) {
             query.userId = userId;
         } else {
-            // If no specific ID, maybe fetch global ones?
-            // For administrative context, we'll fetch all unread ones
             query.isRead = false;
         }
 
@@ -30,7 +28,7 @@ const getNotifications = async (req, res) => {
 // @desc    Mark notification as read
 // @route   PATCH /api/notifications/:id/read
 // @access  Public
-const markAsRead = async (req, res) => {
+export const markAsRead = async (req, res) => {
     try {
         const notification = await Notification.findById(req.params.id);
         if (notification) {
@@ -43,9 +41,4 @@ const markAsRead = async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
-};
-
-module.exports = {
-    getNotifications,
-    markAsRead
 };

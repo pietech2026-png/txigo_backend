@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const Admin = require('../models/Admin');
+import jwt from 'jsonwebtoken';
+import Admin from '../models/Admin.js';
 
 // @desc    Authenticate admin & get token
 // @route   POST /api/admin/auth/login
@@ -105,4 +105,4 @@ const registerAdmin = async (req, res) => {
     }
 };
 
-module.exports = { loginAdmin, getAdminProfile, refreshAdminToken, registerAdmin };
+export { loginAdmin, getAdminProfile, refreshAdminToken, registerAdmin };

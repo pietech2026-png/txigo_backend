@@ -1,12 +1,12 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { 
+import { 
     getTransactions, 
     getWithdrawals, 
     processWithdrawal, 
     adjustWallet 
-} = require('../controllers/financialController');
-const { protect } = require('../middleware/authMiddleware');
+} from '../controllers/financialController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 router.use(protect);
 
@@ -15,4 +15,4 @@ router.get('/withdrawals', getWithdrawals);
 router.post('/withdrawals/:id/process', processWithdrawal);
 router.post('/wallet/adjust', adjustWallet);
 
-module.exports = router;
+export default router;

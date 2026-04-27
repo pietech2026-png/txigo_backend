@@ -1,9 +1,9 @@
-const SubscriptionPlan = require('../models/SubscriptionPlan');
+import SubscriptionPlan from '../models/SubscriptionPlan.js';
 
 // @desc    Get all subscription plans
 // @route   GET /api/admin/subscriptions
 // @access  Public
-const getPlans = async (req, res) => {
+export const getPlans = async (req, res) => {
     try {
         const plans = await SubscriptionPlan.find();
         res.json(plans);
@@ -15,7 +15,7 @@ const getPlans = async (req, res) => {
 // @desc    Create a new subscription plan
 // @route   POST /api/admin/subscriptions
 // @access  Private
-const createPlan = async (req, res) => {
+export const createPlan = async (req, res) => {
     try {
         const plan = await SubscriptionPlan.create(req.body);
         res.status(201).json(plan);
@@ -27,7 +27,7 @@ const createPlan = async (req, res) => {
 // @desc    Update a subscription plan
 // @route   PATCH /api/admin/subscriptions/:id
 // @access  Private
-const updatePlan = async (req, res) => {
+export const updatePlan = async (req, res) => {
     try {
         const plan = await SubscriptionPlan.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!plan) {
@@ -38,5 +38,3 @@ const updatePlan = async (req, res) => {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
-
-module.exports = { getPlans, createPlan, updatePlan };

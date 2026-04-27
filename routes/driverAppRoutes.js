@@ -1,11 +1,10 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { getDriverProfile, updateSubscriptionPlan, updateDutyStatus, updateDriverWallet } = require('../controllers/driverController');
+import { getDriverProfile, updateSubscriptionPlan, updateDutyStatus, updateDriverWallet } from '../controllers/driverController.js';
 
-// Routes for mobile app
 router.get('/profile/:mobile', getDriverProfile);
 router.put('/update-plan', updateSubscriptionPlan);
 router.put('/duty-status', updateDutyStatus);
 router.post('/wallet/update', updateDriverWallet);
 
-module.exports = router;
+export default router;

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const WithdrawalSchema = new mongoose.Schema({
     driverId: {
@@ -22,7 +22,7 @@ const WithdrawalSchema = new mongoose.Schema({
         default: 'Pending'
     },
     reason: {
-        type: String, // Reason for rejection
+        type: String,
         default: ""
     },
     processedAt: {
@@ -30,4 +30,4 @@ const WithdrawalSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Withdrawal', WithdrawalSchema);
+export default mongoose.model('Withdrawal', WithdrawalSchema);

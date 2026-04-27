@@ -1,14 +1,14 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { 
+import { 
     getDrivers, 
     getDriverDetails, 
     updateDriver, 
     verifyDocument,
     getDistinctStates,
     deleteDriver
-} = require('../controllers/driverController');
-const { protect } = require('../middleware/authMiddleware');
+} from '../controllers/driverController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 router.use(protect);
 
@@ -19,4 +19,4 @@ router.patch('/:id', updateDriver);
 router.delete('/:id', deleteDriver);
 router.post('/:id/verify-document', verifyDocument);
 
-module.exports = router;
+export default router;

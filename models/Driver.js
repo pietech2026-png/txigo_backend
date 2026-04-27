@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const DocumentSchema = new mongoose.Schema({
     url: { type: String, default: "" },
@@ -58,8 +58,7 @@ const DriverSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// Virtual to match specific JSON response requirements if needed, or handle in controller
 DriverSchema.set('toJSON', { virtuals: true });
 DriverSchema.set('toObject', { virtuals: true });
 
-module.exports = mongoose.model('Driver', DriverSchema);
+export default mongoose.model('Driver', DriverSchema);

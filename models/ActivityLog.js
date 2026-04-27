@@ -1,25 +1,18 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const ActivityLogSchema = new mongoose.Schema({
-    userType: {
-        type: String,
-        enum: ['Admin', 'User', 'Driver'],
-        required: true
-    },
-    userId: {
+    adminId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        refPath: 'userType'
+        ref: 'Admin',
+        required: true
     },
     action: {
         type: String,
-        required: true // e.g., 'Update Status', 'Login', 'Verify Document'
+        required: true
     },
     details: {
-        type: String // e.g., 'Status changed from Pending to Active'
-    },
-    ipAddress: String,
-    deviceInfo: String
+        type: String
+    }
 }, { timestamps: true });
 
-module.exports = mongoose.model('ActivityLog', ActivityLogSchema);
+export default mongoose.model('ActivityLog', ActivityLogSchema);

@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
-const Booking = require('./models/Booking');
-const dotenv = require('dotenv');
-
+import mongoose from 'mongoose';
+import Booking from './models/Booking.js';
+import dotenv from 'dotenv';
 dotenv.config();
 
 async function check() {

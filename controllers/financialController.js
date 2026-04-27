@@ -1,12 +1,12 @@
-const Transaction = require('../models/Transaction');
-const Withdrawal = require('../models/Withdrawal');
-const User = require('../models/User');
-const Driver = require('../models/Driver');
+import Transaction from '../models/Transaction.js';
+import Withdrawal from '../models/Withdrawal.js';
+import User from '../models/User.js';
+import Driver from '../models/Driver.js';
 
 // @desc    Get all transactions
 // @route   GET /api/admin/transactions
 // @access  Private
-const getTransactions = async (req, res) => {
+export const getTransactions = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
@@ -39,7 +39,7 @@ const getTransactions = async (req, res) => {
 // @desc    Get all withdrawal requests
 // @route   GET /api/admin/withdrawals
 // @access  Private
-const getWithdrawals = async (req, res) => {
+export const getWithdrawals = async (req, res) => {
     const { status } = req.query;
     let query = {};
     if (status) query.status = status;
@@ -58,8 +58,8 @@ const getWithdrawals = async (req, res) => {
 // @desc    Process a withdrawal request
 // @route   POST /api/admin/withdrawals/:id/process
 // @access  Private
-const processWithdrawal = async (req, res) => {
-    const { status, reason } = req.body; // status: 'Processed' or 'Rejected'
+export const processWithdrawal = async (req, res) => {
+    const { status, reason } = req.body;
 
     try {
         const withdrawal = await Withdrawal.findById(req.params.id);
@@ -76,11 +76,6 @@ const processWithdrawal = async (req, res) => {
         withdrawal.processedAt = Date.now();
 
         await withdrawal.save();
-
-        // If rejected, we might want to refund the driver's wallet (logic depends on when we debit it)
-        // Usually, we debit the wallet when the request is MADE.
-        // For this admin-only backend, we just record the status.
-
         res.json({ message: 'Withdrawal status updated', withdrawal });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
@@ -90,7 +85,7 @@ const processWithdrawal = async (req, res) => {
 // @desc    Manual wallet adjustment
 // @route   POST /api/admin/wallet/adjust
 // @access  Private
-const adjustWallet = async (req, res) => {
+export const adjustWallet = async (req, res) => {
     const { userType, userId, amount, category, description } = req.body;
 
     try {
@@ -107,12 +102,10 @@ const adjustWallet = async (req, res) => {
             return res.status(404).json({ message: 'Account not found' });
         }
 
-        // Adjust balance
         const prevBalance = account.walletBalance || 0;
         account.walletBalance = prevBalance + amount;
         await account.save();
 
-        // Create transaction record
         await Transaction.create({
             userType,
             userId,
@@ -132,10 +125,10 @@ const adjustWallet = async (req, res) => {
     }
 };
 
-// @desc    Get wallet summary (for dashboard/admin)
+// @desc    Get wallet summary
 // @route   GET /api/admin/wallet/summary
 // @access  Private
-const getWalletSummary = async (req, res) => {
+export const getWalletSummary = async (req, res) => {
     try {
         const stats = await Driver.aggregate([
             {
@@ -182,5 +175,3 @@ const getWalletSummary = async (req, res) => {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
-
-module.exports = { getTransactions, getWithdrawals, processWithdrawal, adjustWallet, getWalletSummary };

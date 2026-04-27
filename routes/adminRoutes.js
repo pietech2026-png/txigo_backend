@@ -1,17 +1,17 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
-const authRoutes = require('./authRoutes');
-const driverRoutes = require('./driverRoutes');
-const dashboardRoutes = require('./dashboardRoutes');
-const userRoutes = require('./userRoutes');
-const rideRoutes = require('./rideRoutes');
-const configRoutes = require('./configRoutes');
-const financialRoutes = require('./financialRoutes');
-const supportRoutes = require('./supportRoutes');
-const subscriptionRoutes = require('./subscriptionRoutes');
-const promoRoutes = require('./promoRoutes');
-const walletRoutes = require('./walletRoutes');
+import authRoutes from './authRoutes.js';
+import driverRoutes from './driverRoutes.js';
+import dashboardRoutes from './dashboardRoutes.js';
+import userRoutes from './userRoutes.js';
+import rideRoutes from './rideRoutes.js';
+import configRoutes from './configRoutes.js';
+import financialRoutes from './financialRoutes.js';
+import supportRoutes from './supportRoutes.js';
+import subscriptionRoutes from './subscriptionRoutes.js';
+import promoRoutes from './promoRoutes.js';
+import walletRoutes from './walletRoutes.js';
 
 router.use('/auth', authRoutes);
 router.use('/drivers', driverRoutes);
@@ -25,4 +25,4 @@ router.use('/subscriptions', subscriptionRoutes);
 router.use('/promotions', promoRoutes);
 router.use('/wallet', walletRoutes);
 
-module.exports = router;
+export default router;

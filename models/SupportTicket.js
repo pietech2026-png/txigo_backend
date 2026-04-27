@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const SupportTicketSchema = new mongoose.Schema({
     userType: {
@@ -41,4 +41,4 @@ const SupportTicketSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('SupportTicket', SupportTicketSchema);
+export default mongoose.model('SupportTicket', SupportTicketSchema);

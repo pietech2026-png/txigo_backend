@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const PromoCodeSchema = new mongoose.Schema({
     code: {
@@ -18,7 +18,7 @@ const PromoCodeSchema = new mongoose.Schema({
     },
     maxDiscount: {
         type: Number,
-        default: 0 // 0 means no limit for percentage
+        default: 0
     },
     minOrderAmount: {
         type: Number,
@@ -43,4 +43,4 @@ const PromoCodeSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('PromoCode', PromoCodeSchema);
+export default mongoose.model('PromoCode', PromoCodeSchema);

@@ -1,10 +1,9 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { registerDriver, getDriverStatus, reSubmitDriver } = require('../controllers/driverController');
+import { registerDriver, getDriverStatus, reSubmitDriver } from '../controllers/driverController.js';
 
-// Public routes for driver app
 router.post('/register', registerDriver);
 router.get('/status/:mobile', getDriverStatus);
 router.patch('/re-submit/:mobile', reSubmitDriver);
 
-module.exports = router;
+export default router;

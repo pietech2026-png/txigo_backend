@@ -1,12 +1,12 @@
-const Driver = require('../models/Driver');
-const User = require('../models/User');
-const Ride = require('../models/Ride');
-const Transaction = require('../models/Transaction');
+import Driver from '../models/Driver.js';
+import User from '../models/User.js';
+import Ride from '../models/Ride.js';
+import Transaction from '../models/Transaction.js';
 
 // @desc    Get dashboard statistics summary
 // @route   GET /api/admin/dashboard/stats
 // @access  Private
-const getStats = async (req, res) => {
+export const getStats = async (req, res) => {
     try {
         const totalDrivers = await Driver.countDocuments();
         const pendingVerifications = await Driver.countDocuments({ status: 'Pending' });
@@ -16,7 +16,6 @@ const getStats = async (req, res) => {
         const totalUsers = await User.countDocuments();
         const activeUsers = await User.countDocuments({ status: 'Active' });
 
-        // Today's statistics
         const startOfToday = new Date();
         startOfToday.setHours(0, 0, 0, 0);
 
@@ -24,7 +23,6 @@ const getStats = async (req, res) => {
             createdAt: { $gte: startOfToday }
         });
 
-        // Revenue calculation (Total Completed Rides Fare)
         const revenueData = await Ride.aggregate([
             { $match: { status: 'Completed' } },
             { $group: { _id: null, totalRevenue: { $sum: "$fare" } } }
@@ -51,9 +49,8 @@ const getStats = async (req, res) => {
 // @desc    Get growth metrics for charts
 // @route   GET /api/admin/dashboard/growth
 // @access  Private
-const getGrowthMetrics = async (req, res) => {
+export const getGrowthMetrics = async (req, res) => {
     try {
-        // Last 7 days growth data
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -87,5 +84,3 @@ const getGrowthMetrics = async (req, res) => {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
-
-module.exports = { getStats, getGrowthMetrics };

@@ -1,12 +1,11 @@
 // @desc    Upload file (PDF/Image)
 // @route   POST /api/upload
-// @access  Public (Can be restricted later)
-const uploadFile = (req, res) => {
+// @access  Public
+export const uploadFile = (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    // Construct the public URL
     const protocol = req.protocol;
     const host = req.get('host');
     const fileUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
@@ -18,8 +17,4 @@ const uploadFile = (req, res) => {
         mimetype: req.file.mimetype,
         size: req.file.size
     });
-};
-
-module.exports = {
-    uploadFile
 };

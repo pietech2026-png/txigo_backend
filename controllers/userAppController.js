@@ -1,17 +1,13 @@
-const User = require('../models/User');
-const Transaction = require('../models/Transaction');
+import User from '../models/User.js';
+import Transaction from '../models/Transaction.js';
 
-// @desc    Get user profile (including wallet balance)
+// @desc    Get user profile
 // @route   GET /api/user/profile/:mobile
-// @access  Public (for now, matching driver app pattern)
-const getUserProfile = async (req, res) => {
+// @access  Public
+export const getUserProfile = async (req, res) => {
     try {
         const user = await User.findOne({ mobile: req.params.mobile });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
+        if (!user) return res.status(404).json({ message: 'User not found' });
         res.json({
             id: user._id,
             fullName: user.fullName,
@@ -30,28 +26,16 @@ const getUserProfile = async (req, res) => {
     }
 };
 
-// @desc    Update user wallet balance (Add money/Topup)
+// @desc    Update user wallet balance
 // @route   POST /api/user/wallet/update
-// @access  Public (matching driver app pattern)
-const updateWalletBalance = async (req, res) => {
+export const updateWalletBalance = async (req, res) => {
     const { mobile, amount, category, description } = req.body;
-
-    if (!amount || isNaN(amount)) {
-        return res.status(400).json({ message: 'Valid amount is required' });
-    }
-
+    if (!amount || isNaN(amount)) return res.status(400).json({ message: 'Valid amount is required' });
     try {
         const user = await User.findOne({ mobile });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Update balance
+        if (!user) return res.status(404).json({ message: 'User not found' });
         user.walletBalance = (user.walletBalance || 0) + parseFloat(amount);
         await user.save();
-
-        // Create transaction record
         await Transaction.create({
             userType: 'User',
             userId: user._id,
@@ -61,17 +45,8 @@ const updateWalletBalance = async (req, res) => {
             description: description || 'Wallet balance update from app',
             status: 'Completed'
         });
-
-        res.json({
-            message: 'Wallet updated successfully',
-            walletBalance: user.walletBalance
-        });
+        res.json({ message: 'Wallet updated successfully', walletBalance: user.walletBalance });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
-};
-
-module.exports = {
-    getUserProfile,
-    updateWalletBalance
 };

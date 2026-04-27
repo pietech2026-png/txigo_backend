@@ -1,13 +1,13 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { 
+import { 
     getTickets, 
     getTicketDetails, 
     replyTicket, 
     updateTicketStatus,
     deleteTicket 
-} = require('../controllers/supportController');
-const { protect } = require('../middleware/authMiddleware');
+} from '../controllers/supportController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 router.use(protect);
 
@@ -17,4 +17,4 @@ router.post('/tickets/:id/reply', replyTicket);
 router.patch('/tickets/:id', updateTicketStatus);
 router.delete('/tickets/:id', deleteTicket);
 
-module.exports = router;
+export default router;

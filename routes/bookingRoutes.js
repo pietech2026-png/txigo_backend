@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { 
+import { 
     createBooking, 
     getBookings, 
     getBookingById, 
@@ -9,21 +9,16 @@ const {
     cancelBooking,
     userCancelBooking,
     deleteBooking
-} = require('../controllers/bookingController');
-const { protect } = require('../middleware/authMiddleware');
+} from '../controllers/bookingController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
-// GET routes are public for User App integration
 router.get('/', getBookings);
 router.get('/:id', getBookingById);
-
-// Acceptance and Cancellation logic (public for driver claim/release flow)
 router.post('/:id/accept', acceptBooking);
 router.post('/:id/cancel', cancelBooking);
 router.post('/:id/user-cancel', userCancelBooking);
-
-// Creation and Updates remain protected for Admin use
 router.post('/', protect, createBooking);
 router.patch('/:id', protect, updateBooking);
 router.delete('/:id', protect, deleteBooking);
 
-module.exports = router;
+export default router;

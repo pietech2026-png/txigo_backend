@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const NotificationSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: false // Optional if it's a global or driver notification
+        required: false
     },
     driverId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -33,4 +33,4 @@ const NotificationSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Notification', NotificationSchema);
+export default mongoose.model('Notification', NotificationSchema);

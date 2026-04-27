@@ -1,17 +1,15 @@
-const Booking = require('../models/Booking');
-const User = require('../models/User');
-const Transaction = require('../models/Transaction');
-const Notification = require('../models/Notification');
+import Booking from '../models/Booking.js';
+import User from '../models/User.js';
+import Transaction from '../models/Transaction.js';
+import Notification from '../models/Notification.js';
+import Driver from '../models/Driver.js';
 
 // @desc    Create new booking
 // @route   POST /api/bookings
 // @access  Private/Admin
-const createBooking = async (req, res) => {
+export const createBooking = async (req, res) => {
     try {
         const bookingData = req.body;
-        
-        // Map frontend fields if necessary (The user schema already matches mostly, 
-        // but we ensure consistency here)
         const booking = new Booking({
             ...bookingData,
             timeline: [{
@@ -20,7 +18,6 @@ const createBooking = async (req, res) => {
             }]
         });
         const createdBooking = await booking.save();
-        
         res.status(201).json(createdBooking);
     } catch (error) {
         console.error('Error creating booking:', error);
@@ -31,7 +28,7 @@ const createBooking = async (req, res) => {
 // @desc    Get all bookings with filters
 // @route   GET /api/bookings
 // @access  Public/Admin
-const getBookings = async (req, res) => {
+export const getBookings = async (req, res) => {
     try {
         const { status, serviceType, customerMobile, assignedDriverMobile, isAvailable, startDate, endDate } = req.query;
         let query = {};
@@ -63,12 +60,10 @@ const getBookings = async (req, res) => {
     }
 };
 
-const Driver = require('../models/Driver');
-
 // @desc    Accept a booking (Driver Claim)
 // @route   POST /api/bookings/:id/accept
 // @access  Public
-const acceptBooking = async (req, res) => {
+export const acceptBooking = async (req, res) => {
     try {
         const { id } = req.params;
         const { driverMobile } = req.body;
@@ -101,7 +96,6 @@ const acceptBooking = async (req, res) => {
 
         const updatedBooking = await booking.save();
 
-        // [ADD] Notification for Admin about Pilot acceptance
         const now = new Date();
         const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const dateStr = now.toLocaleDateString();
@@ -123,8 +117,7 @@ const acceptBooking = async (req, res) => {
 // @desc    Get booking by ID
 // @route   GET /api/bookings/:id
 // @access  Public/Admin
-const getBookingById = async (req, res) => {
-// ... (rest remains same but I'll update module.exports)
+export const getBookingById = async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id);
         if (booking) {
@@ -141,7 +134,7 @@ const getBookingById = async (req, res) => {
 // @desc    Update booking (status, pilot, financials)
 // @route   PATCH /api/bookings/:id
 // @access  Private/Admin
-const updateBooking = async (req, res) => {
+export const updateBooking = async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id);
 
@@ -151,7 +144,6 @@ const updateBooking = async (req, res) => {
             
             Object.keys(updates).forEach((key) => {
                 if (typeof updates[key] === 'object' && updates[key] !== null && !Array.isArray(updates[key])) {
-                    // Deep merge for nested objects like pricing or vehicle
                     booking[key] = { ...booking[key]._doc, ...updates[key] };
                 } else {
                     booking[key] = updates[key];
@@ -189,7 +181,7 @@ const updateBooking = async (req, res) => {
 // @desc    Delete booking
 // @route   DELETE /api/bookings/:id
 // @access  Private/Admin
-const deleteBooking = async (req, res) => {
+export const deleteBooking = async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id);
 
@@ -208,7 +200,7 @@ const deleteBooking = async (req, res) => {
 // @desc    Cancel a booking (Driver Release)
 // @route   POST /api/bookings/:id/cancel
 // @access  Public
-const cancelBooking = async (req, res) => {
+export const cancelBooking = async (req, res) => {
     try {
         const { id } = req.params;
         const { reason } = req.body;
@@ -219,7 +211,6 @@ const cancelBooking = async (req, res) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
 
-        // Reset assignment and status to Pending
         const prevDriverMobile = booking.assignedDriverMobile;
         const driver = await Driver.findOne({ mobile: prevDriverMobile });
         const driverName = driver ? driver.fullName : prevDriverMobile;
@@ -235,7 +226,6 @@ const cancelBooking = async (req, res) => {
 
         const updatedBooking = await booking.save();
 
-        // [ADD] Notification for Admin about Pilot cancellation
         const now = new Date();
         const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const dateStr = now.toLocaleDateString();
@@ -254,7 +244,7 @@ const cancelBooking = async (req, res) => {
     }
 };
 
-const userCancelBooking = async (req, res) => {
+export const userCancelBooking = async (req, res) => {
     try {
         const { id } = req.params;
         const { reason } = req.body;
@@ -300,7 +290,6 @@ const userCancelBooking = async (req, res) => {
         const updatedBooking = await booking.save();
 
         // 3. Create Notifications
-        // For Admin
         const now = new Date();
         const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const dateStr = now.toLocaleDateString();
@@ -312,7 +301,6 @@ const userCancelBooking = async (req, res) => {
             relatedId: booking._id
         });
 
-        // For assigned Pilot (if any)
         if (booking.assignedDriverMobile) {
              const driver = await Driver.findOne({ mobile: booking.assignedDriverMobile });
              if (driver) {
@@ -330,15 +318,4 @@ const userCancelBooking = async (req, res) => {
         console.error('Error in user cancellation:', error);
         res.status(400).json({ message: error.message });
     }
-};
-
-module.exports = {
-    createBooking,
-    getBookings,
-    getBookingById,
-    updateBooking,
-    deleteBooking,
-    acceptBooking,
-    cancelBooking,
-    userCancelBooking
 };

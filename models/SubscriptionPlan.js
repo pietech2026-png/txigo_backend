@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const SubscriptionPlanSchema = new mongoose.Schema({
     name: {
@@ -26,4 +26,4 @@ const SubscriptionPlanSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('SubscriptionPlan', SubscriptionPlanSchema);
+export default mongoose.model('SubscriptionPlan', SubscriptionPlanSchema);

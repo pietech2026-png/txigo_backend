@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { getPromos, createPromo, updatePromo } = require('../controllers/promoController');
-const { protect } = require('../middleware/authMiddleware');
+import { getPromos, createPromo, updatePromo } from '../controllers/promoController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 router.use(protect);
 
@@ -9,4 +9,4 @@ router.get('/', getPromos);
 router.post('/', createPromo);
 router.patch('/:id', updatePromo);
 
-module.exports = router;
+export default router;

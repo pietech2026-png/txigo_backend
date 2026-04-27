@@ -1,10 +1,9 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
-const { uploadFile } = require('../controllers/uploadController');
+import multer from 'multer';
+import path from 'path';
+import { uploadFile } from '../controllers/uploadController.js';
 
-// Multer Storage Configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
@@ -15,7 +14,6 @@ const storage = multer.diskStorage({
     }
 });
 
-// File Filter (Optional: Allow PDFs and Images)
 const fileFilter = (req, file, cb) => {
     const allowedExts = /jpeg|jpg|png|pdf|webp|heic|heif/;
     const allowedMime = /image\/jpeg|image\/jpg|image\/png|application\/pdf|image\/webp|image\/heic|image\/heif/;
@@ -32,11 +30,10 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: fileFilter
 });
 
-// @route   POST /api/upload
 router.post('/', upload.single('file'), uploadFile);
 
-module.exports = router;
+export default router;

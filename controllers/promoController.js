@@ -1,9 +1,9 @@
-const PromoCode = require('../models/PromoCode');
+import PromoCode from '../models/PromoCode.js';
 
 // @desc    Get all promo codes
 // @route   GET /api/admin/promotions
 // @access  Private
-const getPromos = async (req, res) => {
+export const getPromos = async (req, res) => {
     try {
         const promos = await PromoCode.find().sort({ createdAt: -1 });
         res.json(promos);
@@ -15,7 +15,7 @@ const getPromos = async (req, res) => {
 // @desc    Create a new promo code
 // @route   POST /api/admin/promotions
 // @access  Private
-const createPromo = async (req, res) => {
+export const createPromo = async (req, res) => {
     try {
         const promo = await PromoCode.create(req.body);
         res.status(201).json(promo);
@@ -27,7 +27,7 @@ const createPromo = async (req, res) => {
 // @desc    Update a promo code
 // @route   PATCH /api/admin/promotions/:id
 // @access  Private
-const updatePromo = async (req, res) => {
+export const updatePromo = async (req, res) => {
     try {
         const promo = await PromoCode.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!promo) {
@@ -38,5 +38,3 @@ const updatePromo = async (req, res) => {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
-
-module.exports = { getPromos, createPromo, updatePromo };

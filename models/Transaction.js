@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const TransactionSchema = new mongoose.Schema({
     userType: {
@@ -34,8 +34,8 @@ const TransactionSchema = new mongoose.Schema({
         default: 'Completed'
     },
     relatedId: {
-        type: mongoose.Schema.Types.ObjectId // Can be Ride ID, Withdrawal ID, etc.
+        type: mongoose.Schema.Types.ObjectId
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Transaction', TransactionSchema);
+export default mongoose.model('Transaction', TransactionSchema);

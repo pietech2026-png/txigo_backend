@@ -1,9 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { getUserProfile, updateWalletBalance } = require('../controllers/userAppController');
+import { getUserProfile, updateWalletBalance } from '../controllers/userAppController.js';
 
-// Routes for user mobile app
 router.get('/profile/:mobile', getUserProfile);
 router.post('/wallet/update', updateWalletBalance);
 
-module.exports = router;
+export default router;

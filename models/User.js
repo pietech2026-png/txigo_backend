@@ -1,27 +1,19 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
-    fullName: {
+    name: {
         type: String,
         required: true
     },
     email: {
         type: String,
-        unique: true,
-        sparse: true
-    },
-    mobile: {
-        type: String,
         required: true,
         unique: true
     },
-    city: {
+    phone: {
         type: String,
-        default: ""
-    },
-    profilePic: {
-        type: String,
-        default: ""
+        required: true,
+        unique: true
     },
     walletBalance: {
         type: Number,
@@ -29,12 +21,8 @@ const UserSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Active', 'Blocked', 'Inactive'],
+        enum: ['Active', 'Suspended'],
         default: 'Active'
-    },
-    rating: {
-        type: Number,
-        default: 5.0
     },
     totalRides: {
         type: Number,
@@ -46,4 +34,4 @@ const UserSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema);

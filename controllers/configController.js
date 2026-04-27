@@ -1,9 +1,9 @@
-const VehicleCategory = require('../models/VehicleCategory');
+import VehicleCategory from '../models/VehicleCategory.js';
 
 // @desc    Get all vehicle categories
 // @route   GET /api/admin/vehicles/categories
 // @access  Public
-const getCategories = async (req, res) => {
+export const getCategories = async (req, res) => {
     try {
         const categories = await VehicleCategory.find();
         res.json(categories);
@@ -15,7 +15,7 @@ const getCategories = async (req, res) => {
 // @desc    Create new vehicle category
 // @route   POST /api/admin/vehicles/categories
 // @access  Private
-const createCategory = async (req, res) => {
+export const createCategory = async (req, res) => {
     try {
         const category = await VehicleCategory.create(req.body);
         res.status(201).json(category);
@@ -27,7 +27,7 @@ const createCategory = async (req, res) => {
 // @desc    Update pricing for a vehicle category
 // @route   PATCH /api/admin/vehicles/pricing
 // @access  Private
-const updatePricing = async (req, res) => {
+export const updatePricing = async (req, res) => {
     const { name, baseFare, perKmRate, perMinRate } = req.body;
 
     try {
@@ -46,5 +46,3 @@ const updatePricing = async (req, res) => {
         res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
-
-module.exports = { getCategories, createCategory, updatePricing };
