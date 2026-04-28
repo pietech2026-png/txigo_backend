@@ -253,6 +253,8 @@ export const verifyDocument = async (req, res) => {
 // @access  Public
 export const registerDriver = async (req, res) => {
     try {
+        console.log("=== REGISTER/RESUBMIT BODY KEYS ===", Object.keys(req.body));
+        console.log("city value:", req.body.city, "| dob value:", req.body.dob);
         const { mobile, email } = req.body;
         const cleanMobile = String(mobile || '').trim();
         const cleanEmail = String(email || '').trim();
@@ -365,6 +367,8 @@ export const getDriverStatus = async (req, res) => {
 export const reSubmitDriver = async (req, res) => {
     try {
         const mobile = req.params.mobile.trim();
+        console.log("=== RE-SUBMIT BODY KEYS ===", Object.keys(req.body));
+        console.log("city:", req.body.city, "| dob:", req.body.dob);
         const driver = await Driver.findOne({ mobile });
         if (!driver) {
             return res.status(404).json({ message: 'Driver not found' });
