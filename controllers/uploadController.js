@@ -6,14 +6,10 @@ export const uploadFile = (req, res) => {
         return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    const protocol = req.protocol;
-    const host = req.get('host');
-    const fileUrl = `${protocol}://${host}/uploads/${req.file.filename}`;
-
     res.status(200).json({
         message: 'File uploaded successfully',
-        url: fileUrl,
-        filename: req.file.filename,
+        url: req.file.path, // Automatically contains Cloudinary direct URL
+        filename: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size
     });
