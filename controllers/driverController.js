@@ -8,6 +8,23 @@ const formatDate = (date) => {
     return d.toISOString().replace('T', ' ').substring(0, 19);
 };
 
+// Map incoming document keys from frontend to match MongoDB schema keys
+const normalizeDocKey = (key) => {
+    if (!key) return key;
+    const k = String(key).replace(/\s+/g, '').toLowerCase();
+    if (k.includes('vehicle') && k.includes('front')) return 'carFront';
+    if (k.includes('vehicle') && k.includes('back')) return 'carBack';
+    if ((k.includes('dl') || k.includes('driving')) && k.includes('front')) return 'dlFront';
+    if ((k.includes('dl') || k.includes('driving')) && k.includes('back')) return 'dlBack';
+    if (k.includes('aadhar') && k.includes('front')) return 'aadharFront';
+    if (k.includes('aadhar') && k.includes('back')) return 'aadharBack';
+    if (k.includes('pan') && k.includes('front')) return 'panFront';
+    if (k.includes('pan') && k.includes('back')) return 'panBack';
+    if (k.includes('rc') && k.includes('front')) return 'rcFront';
+    if (k.includes('rc') && k.includes('back')) return 'rcBack';
+    return key;
+};
+
 // @desc    Get all drivers with filters and pagination
 // @route   GET /api/admin/drivers
 // @access  Private
@@ -180,8 +197,9 @@ export const updateDriver = async (req, res) => {
         
         if (updates.documents) {
             if (!driver.documents) driver.documents = {};
-            Object.keys(updates.documents).forEach(docKey => {
-                const docUpdate = updates.documents[docKey];
+            Object.keys(updates.documents).forEach(rawKey => {
+                const docKey = normalizeDocKey(rawKey);
+                const docUpdate = updates.documents[rawKey];
                 if (!driver.documents[docKey]) {
                     driver.documents[docKey] = { url: "", status: 'pending', reason: "" };
                 }
@@ -250,8 +268,9 @@ export const registerDriver = async (req, res) => {
             });
             if (req.body.documents) {
                 if (!existingDriver.documents) existingDriver.documents = {};
-                Object.keys(req.body.documents).forEach(docKey => {
-                    const docUpdate = req.body.documents[docKey];
+                Object.keys(req.body.documents).forEach(rawKey => {
+                    const docKey = normalizeDocKey(rawKey);
+                    const docUpdate = req.body.documents[rawKey];
                     if (!existingDriver.documents[docKey]) {
                         existingDriver.documents[docKey] = { url: "", status: 'pending', reason: "" };
                     }
@@ -275,8 +294,9 @@ export const registerDriver = async (req, res) => {
 
         let initialDocuments = {};
         if (req.body.documents) {
-            Object.keys(req.body.documents).forEach(docKey => {
-                const docVal = req.body.documents[docKey];
+            Object.keys(req.body.documents).forEach(rawKey => {
+                const docKey = normalizeDocKey(rawKey);
+                const docVal = req.body.documents[rawKey];
                 if (typeof docVal === 'string') {
                     initialDocuments[docKey] = { url: docVal, status: 'pending', reason: "" };
                 } else if (typeof docVal === 'object') {
@@ -355,8 +375,9 @@ export const reSubmitDriver = async (req, res) => {
 
         if (updates.documents) {
             if (!driver.documents) driver.documents = {};
-            Object.keys(updates.documents).forEach(docKey => {
-                const docUpdate = updates.documents[docKey];
+            Object.keys(updates.documents).forEach(rawKey => {
+                const docKey = normalizeDocKey(rawKey);
+                const docUpdate = updates.documents[rawKey];
                 if (!driver.documents[docKey]) {
                     driver.documents[docKey] = { url: "", status: 'pending', reason: "" };
                 }
