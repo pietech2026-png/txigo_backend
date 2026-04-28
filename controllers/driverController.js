@@ -253,7 +253,7 @@ export const registerDriver = async (req, res) => {
                 Object.keys(req.body.documents).forEach(docKey => {
                     const docUpdate = req.body.documents[docKey];
                     if (!existingDriver.documents[docKey]) {
-                        existingDriver.documents[docKey] = { url: "", status: 'Pending', reason: "" };
+                        existingDriver.documents[docKey] = { url: "", status: 'pending', reason: "" };
                     }
                     if (typeof docUpdate === 'string') {
                         existingDriver.documents[docKey].url = docUpdate;
@@ -278,11 +278,11 @@ export const registerDriver = async (req, res) => {
             Object.keys(req.body.documents).forEach(docKey => {
                 const docVal = req.body.documents[docKey];
                 if (typeof docVal === 'string') {
-                    initialDocuments[docKey] = { url: docVal, status: 'Pending', reason: "" };
+                    initialDocuments[docKey] = { url: docVal, status: 'pending', reason: "" };
                 } else if (typeof docVal === 'object') {
                     initialDocuments[docKey] = {
                         url: docVal.url || "",
-                        status: docVal.status || "Pending",
+                        status: docVal.status || "pending",
                         reason: docVal.reason || ""
                     };
                 }
@@ -358,7 +358,7 @@ export const reSubmitDriver = async (req, res) => {
             Object.keys(updates.documents).forEach(docKey => {
                 const docUpdate = updates.documents[docKey];
                 if (!driver.documents[docKey]) {
-                    driver.documents[docKey] = { url: "", status: 'Pending', reason: "" };
+                    driver.documents[docKey] = { url: "", status: 'pending', reason: "" };
                 }
                 if (typeof docUpdate === 'string') {
                     driver.documents[docKey].url = docUpdate;
