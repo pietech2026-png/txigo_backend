@@ -12,40 +12,37 @@ export const uploadDocument = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    if (!driverId || !type) {
-      return res.status(400).json({
-        message: "driverId and type are required",
-      });
-    }
-
-    let driver;
-    // Check if driverId is a valid ObjectId, otherwise treat it as a mobile number.
-    if (driverId.length === 24) {
-        driver = await Driver.findById(driverId).catch(() => null);
-    } 
-    if (!driver) {
-        driver = await Driver.findOne({ mobile: driverId });
-    }
-
-    if (!driver) {
-      return res.status(404).json({ message: "Driver not found" });
-    }
-
     const url = file.path;
 
-    driver.documents = driver.documents || {};
-    driver.documents[type] = {
-      url,
-      status: "pending",
-      reason: "",
-    };
+    // If driverId and type are provided, attempt to update the driver DB directly
+    let driver = null;
+    if (driverId && type) {
+        if (driverId.length === 24) {
+            driver = await Driver.findById(driverId).catch(() => null);
+        } 
+        if (!driver) {
+            driver = await Driver.findOne({ mobile: driverId }).catch(() => null);
+        }
 
-    await driver.save();
+        if (driver) {
+            driver.documents = driver.documents || {};
+            driver.documents[type] = {
+                url,
+                status: "pending",
+                reason: "",
+            };
+            await driver.save();
+        }
+    }
 
+    // Always respond with the Cloudinary URL so the frontend can securely handle it!
     res.status(200).json({
-      message: "Uploaded & saved successfully",
+      message: "File uploaded successfully",
       url,
-      driver,
+      filename: file.originalname,
+      mimetype: file.mimetype,
+      size: file.size,
+      driver: driver || undefined
     });
   } catch (error) {
     console.error("Upload Error:", error);
