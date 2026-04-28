@@ -1,7 +1,8 @@
 import express from 'express';
 const router = express.Router();
-import { getDriverProfile, updateSubscriptionPlan, updateDutyStatus, updateDriverWallet } from '../controllers/driverController.js';
+import { getDriverProfile, updateSubscriptionPlan, updateDutyStatus, updateDriverWallet, getDrivers } from '../controllers/driverController.js';
 
+router.get('/', getDrivers);
 router.get('/profile/:mobile', getDriverProfile);
 router.put('/update-plan', updateSubscriptionPlan);
 router.put('/duty-status', updateDutyStatus);
