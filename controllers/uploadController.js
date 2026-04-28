@@ -18,12 +18,20 @@ export const uploadDocument = async (req, res) => {
       });
     }
 
-    const url = file.path;
+    let driver;
+    // Check if driverId is a valid ObjectId, otherwise treat it as a mobile number.
+    if (driverId.length === 24) {
+        driver = await Driver.findById(driverId).catch(() => null);
+    } 
+    if (!driver) {
+        driver = await Driver.findOne({ mobile: driverId });
+    }
 
-    const driver = await Driver.findById(driverId);
     if (!driver) {
       return res.status(404).json({ message: "Driver not found" });
     }
+
+    const url = file.path;
 
     driver.documents = driver.documents || {};
     driver.documents[type] = {
