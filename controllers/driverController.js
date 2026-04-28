@@ -246,8 +246,16 @@ export const registerDriver = async (req, res) => {
             if (req.body.documents) {
                 if (!existingDriver.documents) existingDriver.documents = {};
                 Object.keys(req.body.documents).forEach(docKey => {
+                    const docUpdate = req.body.documents[docKey];
                     if (!existingDriver.documents[docKey]) {
-                        existingDriver.documents[docKey] = req.body.documents[docKey];
+                        existingDriver.documents[docKey] = { url: "", status: 'Pending', reason: "" };
+                    }
+                    if (typeof docUpdate === 'string') {
+                        existingDriver.documents[docKey].url = docUpdate;
+                    } else if (typeof docUpdate === 'object') {
+                        if (docUpdate.url !== undefined) existingDriver.documents[docKey].url = docUpdate.url;
+                        if (docUpdate.status !== undefined) existingDriver.documents[docKey].status = docUpdate.status;
+                        if (docUpdate.reason !== undefined) existingDriver.documents[docKey].reason = docUpdate.reason;
                     }
                 });
                 existingDriver.markModified('documents');
@@ -260,7 +268,28 @@ export const registerDriver = async (req, res) => {
             });
         }
 
-        const driver = new Driver({ ...req.body, status: 'Pending' });
+        let initialDocuments = {};
+        if (req.body.documents) {
+            Object.keys(req.body.documents).forEach(docKey => {
+                const docVal = req.body.documents[docKey];
+                if (typeof docVal === 'string') {
+                    initialDocuments[docKey] = { url: docVal, status: 'Pending', reason: "" };
+                } else if (typeof docVal === 'object') {
+                    initialDocuments[docKey] = {
+                        url: docVal.url || "",
+                        status: docVal.status || "Pending",
+                        reason: docVal.reason || ""
+                    };
+                }
+            });
+        }
+
+        const driverData = { ...req.body, status: 'Pending' };
+        if (Object.keys(initialDocuments).length > 0) {
+            driverData.documents = initialDocuments;
+        }
+
+        const driver = new Driver(driverData);
         const savedDriver = await driver.save();
         res.status(201).json({ message: 'Registration successful', driverId: savedDriver._id });
     } catch (error) {
