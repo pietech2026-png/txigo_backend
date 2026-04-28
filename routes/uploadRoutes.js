@@ -3,7 +3,7 @@ const router = express.Router();
 import multer from 'multer';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import cloudinary from '../config/cloudinary.js';
-import { uploadFile } from '../controllers/uploadController.js';
+import { uploadDocument } from '../controllers/uploadController.js';
 
 const storage = new CloudinaryStorage({
     cloudinary,
@@ -18,6 +18,6 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-router.post('/', upload.single('file'), uploadFile);
+router.post('/', upload.single('file'), uploadDocument);
 
 export default router;
