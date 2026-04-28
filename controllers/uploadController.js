@@ -6,7 +6,14 @@ import Driver from "../models/Driver.js";
 export const uploadDocument = async (req, res) => {
   try {
     const file = req.file;
-    const { driverId, type } = req.body;
+    const driverId = req.body.driverId || req.body.mobile || req.body.id;
+    const type = req.body.type || req.body.documentType || req.body.docType;
+    
+    console.log("=== INCOMING UPLOAD REQUEST ===");
+    console.log("file:", !!file);
+    console.log("body:", req.body);
+    console.log("driverId detected:", driverId);
+    console.log("type detected:", type);
 
     if (!file) {
       return res.status(400).json({ message: "No file uploaded" });
