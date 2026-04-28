@@ -36,7 +36,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Static folder for uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static('/tmp'));
 
 // Logger for debugging
 app.use((req, res, next) => {
