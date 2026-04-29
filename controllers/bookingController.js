@@ -353,7 +353,7 @@ export const completeBooking = async (req, res) => {
         await Notification.create({
             title: 'Ride Completed',
             message: `Ride completed for ${booking.customerName} at ${timeStr}, ${dateStr}`,
-            type: 'Status Update',
+            type: 'Other',
             relatedId: booking._id
         });
 
