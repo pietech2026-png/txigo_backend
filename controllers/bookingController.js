@@ -363,3 +363,35 @@ export const completeBooking = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+// @desc    Get filtered bookings for driver based on state
+// @route   GET /api/driver/bookings
+// @access  Private/Driver
+export const getDriverBookings = async (req, res) => {
+    try {
+        const driverId = req.user.id;
+
+        const driver = await Driver.findById(driverId);
+
+        if (!driver) {
+            return res.status(404).json({ message: "Driver not found" });
+        }
+
+        if (!driver.state) {
+            return res.status(400).json({ message: "Driver state not defined. Please update your profile." });
+        }
+
+        const bookings = await Booking.find({
+            state: driver.state,
+            status: "Pending"
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json(bookings);
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};

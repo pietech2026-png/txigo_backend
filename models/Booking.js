@@ -57,6 +57,7 @@ const BookingSchema = new mongoose.Schema({
     enum: ['Pending', 'Confirmed', 'Outstation', 'Completed', 'Cancelled'],
     default: 'Pending'
   },
+  state: { type: String, required: true },
   assignedDriverMobile: { type: String, default: null },
   acceptedByPilot: { 
     name: String,
@@ -83,5 +84,7 @@ const BookingSchema = new mongoose.Schema({
     }
   ]
 }, { timestamps: true });
+
+BookingSchema.index({ state: 1 });
 
 export default mongoose.model('Booking', BookingSchema);
