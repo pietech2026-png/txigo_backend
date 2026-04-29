@@ -350,12 +350,16 @@ export const completeBooking = async (req, res) => {
         const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const dateStr = now.toLocaleDateString();
 
-        await Notification.create({
-            title: 'Ride Completed',
-            message: `Ride completed for ${booking.customerName} at ${timeStr}, ${dateStr}`,
-            type: 'Other',
-            relatedId: booking._id
-        });
+        try {
+            await Notification.create({
+                title: 'Ride Completed',
+                message: `Ride completed for ${booking.customerName} at ${timeStr}, ${dateStr}`,
+                type: 'Other',
+                relatedId: booking._id
+            });
+        } catch (notificationError) {
+            console.error('Notification failed but booking was updated:', notificationError);
+        }
 
         res.json(updatedBooking);
     } catch (error) {
