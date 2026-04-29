@@ -319,3 +319,47 @@ export const userCancelBooking = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+// @desc    Complete a booking
+// @route   POST /api/bookings/:id/complete
+// @access  Public
+export const completeBooking = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const booking = await Booking.findById(id);
+        if (!booking) {
+            return res.status(404).json({ message: 'Booking not found' });
+        }
+
+        if (booking.status === 'Completed' || booking.status === 'Cancelled') {
+            return res.status(400).json({ message: `Booking already ${booking.status}` });
+        }
+
+        booking.status = 'Completed';
+        booking.completedAt = new Date();
+        
+        booking.timeline.push({
+            status: 'Completed',
+            message: `Ride completed successfully`
+        });
+
+        const updatedBooking = await booking.save();
+
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const dateStr = now.toLocaleDateString();
+
+        await Notification.create({
+            title: 'Ride Completed',
+            message: `Ride completed for ${booking.customerName} at ${timeStr}, ${dateStr}`,
+            type: 'Status Update',
+            relatedId: booking._id
+        });
+
+        res.json(updatedBooking);
+    } catch (error) {
+        console.error('Error completing booking:', error);
+        res.status(400).json({ message: error.message });
+    }
+};

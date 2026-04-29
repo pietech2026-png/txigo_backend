@@ -8,7 +8,8 @@ import {
     acceptBooking,
     cancelBooking,
     userCancelBooking,
-    deleteBooking
+    deleteBooking,
+    completeBooking
 } from '../controllers/bookingController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -17,6 +18,7 @@ router.get('/:id', getBookingById);
 router.post('/:id/accept', acceptBooking);
 router.post('/:id/cancel', cancelBooking);
 router.post('/:id/user-cancel', userCancelBooking);
+router.post('/:id/complete', completeBooking);
 router.post('/', protect, createBooking);
 router.patch('/:id', protect, updateBooking);
 router.delete('/:id', protect, deleteBooking);
