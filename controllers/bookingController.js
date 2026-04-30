@@ -78,10 +78,25 @@ export const acceptBooking = async (req, res) => {
         }
 
         const driver = await Driver.findOne({ mobile: driverMobile });
-        const driverName = driver ? driver.fullName : driverMobile;
+        if (!driver) {
+            return res.status(404).json({ message: 'Driver not found' });
+        }
 
+        const driverName = driver.fullName || driverMobile;
+
+        // 1. Check if driver has an active subscription plan
+        if (!driver.subscriptionPlan || driver.subscriptionPlan === 'None') {
+            return res.status(400).json({ message: 'SUBSCRIPTION_REQUIRED' });
+        }
+
+        // 2. Check if booking is restricted ("Allocate Our Pilot")
+        if (booking.isOwnPilotAllocated) {
+            return res.status(400).json({ message: 'LATE_ORDER_ACCEPTED' });
+        }
+
+        // 3. Check if already accepted
         if (booking.assignedDriverMobile) {
-            return res.status(400).json({ message: 'Booking already accepted by another driver' });
+            return res.status(400).json({ message: 'LATE_ORDER_ACCEPTED' });
         }
 
         // Atomically claim the booking
@@ -332,7 +347,11 @@ export const completeBooking = async (req, res) => {
             return res.status(404).json({ message: 'Booking not found' });
         }
 
-        if (booking.status === 'Completed' || booking.status === 'Cancelled') {
+        if (booking.status === 'Completed') {
+            return res.status(200).json(booking);
+        }
+
+        if (booking.status === 'Cancelled') {
             return res.status(400).json({ message: `Booking already ${booking.status}` });
         }
 
