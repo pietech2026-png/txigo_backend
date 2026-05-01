@@ -91,7 +91,10 @@ export const acceptBooking = async (req, res) => {
 
         // 2. Check if booking is restricted ("Allocate Our Pilot")
         if (booking.isOwnPilotAllocated) {
-            return res.status(400).json({ message: 'LATE_ORDER_ACCEPTED' });
+            const isEligible = booking.eligiblePilots && booking.eligiblePilots.some(p => p.id && p.id.toString() === driver._id.toString());
+            if (!isEligible) {
+                return res.status(400).json({ message: 'LATE_ORDER_ACCEPTED' });
+            }
         }
 
         // 3. Check if already accepted
@@ -406,7 +409,11 @@ export const getDriverBookings = async (req, res) => {
 
         const bookings = await Booking.find({
             state: driver.state,
-            status: "Pending"
+            status: "Pending",
+            $or: [
+                { isOwnPilotAllocated: { $ne: true } },
+                { "eligiblePilots.id": driverId }
+            ]
         }).sort({ createdAt: -1 });
 
         res.status(200).json(bookings);

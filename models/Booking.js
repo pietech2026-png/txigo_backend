@@ -69,6 +69,11 @@ const BookingSchema = new mongoose.Schema({
     mobile: String,
     id: { type: mongoose.Schema.Types.ObjectId, ref: 'Driver' }
   },
+  eligiblePilots: [{
+    id: { type: mongoose.Schema.Types.ObjectId, ref: 'Driver' },
+    name: String,
+    mobile: String
+  }],
   acceptedAt: { type: Date },
   cancellationReason: { type: String },
   cancelledBy: { 

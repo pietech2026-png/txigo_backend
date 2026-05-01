@@ -1,5 +1,8 @@
 import express from 'express';
 const router = express.Router();
+import { adminLogin } from '../controllers/adminController.js';
+
+router.post('/login', adminLogin);
 
 import authRoutes from './authRoutes.js';
 import driverRoutes from './driverRoutes.js';
