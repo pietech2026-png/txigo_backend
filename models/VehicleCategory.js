@@ -22,6 +22,10 @@ const VehicleCategorySchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    seater: {
+        type: Number,
+        default: 4
+    },
     capacity: {
         type: Number,
         default: 4

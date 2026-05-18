@@ -14,9 +14,9 @@ export const getUsers = async (req, res) => {
     if (city) query.city = { $regex: city, $options: 'i' };
     if (search) {
         query.$or = [
-            { fullName: { $regex: search, $options: 'i' } },
+            { name: { $regex: search, $options: 'i' } },
             { email: { $regex: search, $options: 'i' } },
-            { mobile: { $regex: search, $options: 'i' } }
+            { phone: { $regex: search, $options: 'i' } }
         ];
     }
 
